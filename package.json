@@ -1,4 +1,7 @@
 {
+  "name": "react-native-card-flip",
+  "version": "0.0.1",
+  "description": "A React Native components used for fliping a view/card",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -7,8 +10,28 @@
     "web": "expo start --web",
     "eject": "expo eject"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iagows/rn-card-flip.git"
+  },
+  "keywords": [
+    "react-native-component",
+    "react-native",
+    "android",
+    "flip",
+    "card"
+  ],
+  "author": {
+    "name": "Iago Alves",
+    "url": "https://github.com/iagows/"
+  },
+  "license": "GNU General Public License v3.0",
+  "bugs": {
+    "url": "https://github.com/iagows/rn-card-flip/issues"
+  },
+  "homepage": "https://github.com/iagows/rn-card-flip",
   "dependencies": {
-    "expo": "~38.0.8",
+    "expo": "^38.0.10",
     "expo-status-bar": "^1.0.2",
     "react": "~16.11.0",
     "react-dom": "~16.11.0",
