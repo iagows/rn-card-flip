@@ -1,7 +1,7 @@
 import React,
 {
   useState,
-  useEffect
+  useEffect, useRef
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -18,17 +18,15 @@ const FlipCard = props => {
   const isPropsFlipped = (props.alignHeight || props.alignWidth) ? !props.flip : props.flip;
 
   const [isFlipped, setIsFlipped] = useState(isPropsFlipped);
-  const [isFlipping, setIsFlipping] = useState(false);
-  const [rotate, setRotate] = useState(new Animated.Value(Number(props.flip)));
   const [measured, setMeasured] = useState(false);
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
   const [face, setFace] = useState({ width: 0, height: 0 });
   const [back, setBack] = useState({ width: 0, height: 0 });
   const [timer, setTimer] = useState(null);
+  const rotate = useRef(new Animated.Value(Number(props.flip)));
 
   const toggleCard = () => {
-    setIsFlipping(true);
     props.onFlipStart(isFlipped);
     animation(isFlipped);
   };
@@ -48,7 +46,6 @@ const FlipCard = props => {
         useNativeDriver: props.useNativeDriver
       }
     ).start(param => {
-      setIsFlipping(false);
       props.onFlipEnd(flipped);
     })
   };
@@ -67,10 +64,11 @@ const FlipCard = props => {
   const transform = props.perspective ? [{ perspective: props.perspective }] : [];
   let renderSide = false;
 
+  console.log('aqui');
   if (props.flipHorizontal) {
     transform.push(
       {
-        rotateY: rotate.interpolate({
+        rotateY: rotate.current.interpolate({
           inputRange: [0, 1],
           outputRange: ['0deg, 180deg']
         })
@@ -81,7 +79,7 @@ const FlipCard = props => {
   if (props.flipVertical) {
     transform.push(
       {
-        rotateX: rotate.interpolate({
+        rotateX: rotate.current.interpolate({
           inputRange: [0, 1],
           outputRange: ['0deg, 180deg']
         })
@@ -212,8 +210,8 @@ FlipCard.defaultProps = {
   flip: false,
   friction: 6,
   perspective: 1000,
-  // flipHorizontal: true,
-  // flipVertical: false,
+  flipHorizontal: true,
+  flipVertical: false,
   clickable: true,
   onFlipEnd: () => { },
   onFlipStart: () => { },

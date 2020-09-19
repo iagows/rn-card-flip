@@ -11,8 +11,8 @@ const App = props => {
                 style={styles.container}
                 friction={6}
                 perspective={1000}
-                // flipHorizontal={true}
-                // flipVertical={false}
+                flipHorizontal={true}
+                flipVertical={false}
                 flip={false}
                 clickable={true}
                 onFlipEnd={(isFlipEnd) => { console.log('isFlipEnd', isFlipEnd) }}
