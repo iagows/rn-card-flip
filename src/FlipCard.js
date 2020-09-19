@@ -6,12 +6,15 @@ import React,
 import PropTypes from 'prop-types';
 import {
   Animated,
-  Platform,
   StyleSheet,
-  View
+  TouchableOpacity,
+  Text
 } from 'react-native';
 
-export default Index = props => {
+import Back from './Back';
+import Face from './Face';
+
+const FlipCard = props => {
   const isPropsFlipped = (props.alignHeight || props.alignWidth) ? !props.flip : props.flip;
 
   const [isFlipped, setIsFlipped] = useState(isPropsFlipped);
@@ -61,7 +64,6 @@ export default Index = props => {
   };
 
   /////////////
-  const c = props.children;
   const transform = props.perspective ? [{ perspective: props.perspective }] : [];
   let renderSide = false;
 
@@ -111,7 +113,7 @@ export default Index = props => {
           }
         }}
       >
-        {c[1]}
+        {props.children ? props.children[1] : <Text>Tumpero</Text>}
       </Back>
     )
   } else {
@@ -135,87 +137,95 @@ export default Index = props => {
           }
         }}
       >
-        {c[0]}
+        {props.children ? props.children[0] : <Text>Tumpero</Text>}
       </Face >
     )
   }
 
-  return (
-    <>
-    </>
-  );
-};
-
-export const Face = (props) => {
-  return (
-    <View
-      style={{
-        ...styles.face,
-        ...props.style
-      }}
-      onLayout={props.onLayout}
-    >
-      {props.children}
-    </View>
-  );
-};
-
-Face.propTypes = {
-  children(props, propName, componentName) {
-  }
-};
-
-export const Back = (props) => {
-  const transform = [];
-  if (props.flipHorizontal) {
-    transform.push({ scaleX: -1 });
-    if (Platform.OS === 'android') {
-      transform.push({ perspective: props.perspective });
+  if (props.clickable) {
+    let opacity = 0;
+    if (((props.alignHeight || props.alignWidth) && measured) || !(props.alignHeight || props.alignWidth)) {
+      opacity = 1;
     }
+    return (
+      <TouchableOpacity
+        // style={{ flex: 1 }}
+        testID={props.testID}
+        activeOpacity={1}
+        onPress={() => toggleCard()}
+      >
+        <Animated.View
+          {...props}
+          style={{
+            ...styles.flipCard,
+            transform: transform,
+            opacity: opacity,
+            ...props.style
+          }}
+        >
+          {renderSide}
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  } else {
+    return (
+      <Animated.View
+        {...props}
+        style={{
+          ...styles.flipCard,
+          transform: transform,
+          ...props.style
+        }}
+      >
+        {renderSide}
+      </Animated.View>
+    );
   }
-  if (props.flipVertical) {
-    transform.push({ scaleY: -1 });
-    if (Platform.OS === 'android') {
-      transform.push({ perspective: props.perspective });
-    }
-  }
-
-  return (
-    <View
-      style={{
-        ...styles.back,
-        ...props.style,
-        transform: transform
-      }}
-      onLayout={props.onLayout}
-    >
-      {props.children}
-    </View>
-  );
 };
 
-Back.defaultProps = {
-  flipHorizontal: false,
-  flipVertical: true,
-  perspective: 1000,
-};
-
-Back.propTypes = {
+FlipCard.propTypes = {
+  flip: PropTypes.bool,
+  friction: PropTypes.number,
+  perspective: PropTypes.number,
   flipHorizontal: PropTypes.bool,
   flipVertical: PropTypes.bool,
-  perspective: PropTypes.number,
+  clickable: PropTypes.bool,
+  onFlipEnd: PropTypes.func,
+  onFlipStart: PropTypes.func,
+  alignHeight: PropTypes.bool,
+  alignWidth: PropTypes.bool,
+  useNativeDriver: PropTypes.bool,
   children(props, propName, componentName) {
+    const prop = props[propName]
+    if (React.Children.count(prop) !== 2) {
+      return new Error(
+        '`' + componentName + '` ' +
+        'should contain exactly two children. ' +
+        'The first child represents the front of the card. ' +
+        'The second child represents the back of the card.'
+      )
+    }
   }
-};
+}
+
+FlipCard.defaultProps = {
+  flip: false,
+  friction: 6,
+  perspective: 1000,
+  // flipHorizontal: true,
+  // flipVertical: false,
+  clickable: true,
+  onFlipEnd: () => { },
+  onFlipStart: () => { },
+  alignHeight: false,
+  alignWidth: false,
+  useNativeDriver: true,
+}
 
 const styles = StyleSheet.create({
-  back: {
-    flex: 1
-  },
-  face: {
-    flex: 1
-  },
   flipCard: {
-    flex: 1
+    // flex: 1
   }
 });
+
+export default FlipCard;
