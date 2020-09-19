@@ -1,6 +1,6 @@
 {
   "name": "react-native-card-flip",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A React Native components used for fliping a view/card",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
